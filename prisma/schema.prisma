@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  disabledAt   DateTime? @map("disabled_at")
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  username     String    @unique
+  usernameHash String    @map("username_hash")
+  email        String    @unique
+  emailHash    String    @map("email_hash")
+  passwordHash String    @map("password_hash")
+  pictureUri   String    @default("/images/default-profile-picture.png") @map("picture_uri")
+  permissions  String[] // UsersPermissionsEnum
+
+  Sessions Session[]
+
+  @@index([id])
+  @@index([firstName])
+  @@index([lastName])
+  @@index([username])
+  @@index([email])
+  @@map("users")
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  ipAddress String    @map("ip_address")
+
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@index([id])
+  @@map("sessions")
+}

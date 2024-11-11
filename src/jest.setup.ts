@@ -1,0 +1,17 @@
+process.env.NODE_ENV = "testing";
+process.env.PORT = "3090";
+process.env.DATABASE_URL =
+  "postgresql://docker:docker@localhost:5432/db-tibia-info-test?schema=public";
+process.env.URL_FRONT = "http://localhost:3590";
+process.env.SALT_OR_ROUNDS = "6";
+process.env.SECURITY_ALGORITHM = "aes-256-cbc";
+process.env.SECURITY_SECRET = "3d2e1f2a4c6d8a9b0c1d2e3f4a5b6c7d";
+process.env.SECURITY_SALT = "6";
+process.env.JWT_SECRET = "3d2e1f2a4c6d8a9b0c1d2e3f4a5b6c7d";
+process.env.JWT_EXPIRES = "30d";
+process.env.SMTP_HOST = "smtp.gmail.email";
+process.env.SMTP_PORT = "465";
+process.env.SMTP_USER = "tibia-info@gmail.com";
+process.env.SMTP_PASSWORD = "@TibiaInfo123";
+process.env.REDIS_HOST = "localhost";
+process.env.REDIS_PORT = "6379";
