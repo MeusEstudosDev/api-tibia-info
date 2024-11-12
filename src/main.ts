@@ -13,6 +13,7 @@ import { ValidationPipe } from "@nestjs/common";
 
 import { AppModule } from "./app.module";
 import { env } from "./configs/env";
+import fastifyCookie from "@fastify/cookie";
 
 declare const module: any;
 
@@ -22,6 +23,10 @@ async function bootstrap() {
     new FastifyAdapter(),
     { cors: true },
   );
+
+  await app.register(fastifyCookie, {
+    secret: env.COOKIE_SECRET,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -42,13 +47,13 @@ async function bootstrap() {
   await app.register(fastifyCsrf);
 
   const config = new DocumentBuilder()
-    .setTitle("Cats example")
-    .setDescription("The cats API description")
+    .setTitle("API Tibia-Info.com")
+    .setDescription("API Tibia-Info.com")
     .setVersion("1.0")
-    .addTag("cats")
+    .addTag("tibia-info")
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, documentFactory);
+  SwaggerModule.setup("docs", app, documentFactory);
 
   await app.listen(Number(env.PORT), () => Logger.log(env.PORT, "Bootstrap"));
 

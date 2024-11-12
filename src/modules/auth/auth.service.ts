@@ -5,11 +5,12 @@ import { AuthInvalidCredentialException } from "../../common/exceptions/auth.inv
 import * as bcrypt from "bcrypt";
 import { UsersDto } from "../users/dtos/users.dto";
 import { JwtService } from "@nestjs/jwt";
-import { AuthResponseDto } from "./dtos/auth.dto";
 import { SessionsCreateRepository } from "../sessions/repositories/sessions.create.repository";
 import { env } from "../../configs/env";
 import { Session } from "../sessions/sessions.entity";
 import { SessionsRevokedAllRepository } from "../sessions/repositories/sessions.revoked-all.repository";
+import { FastifyReply } from "fastify";
+import { MessageDto } from "../../common/dtos/message.dto";
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,8 @@ export class AuthService {
     username: string,
     password: string,
     ipAddress: string,
-  ): Promise<AuthResponseDto> {
+    res: FastifyReply,
+  ): Promise<MessageDto> {
     let userFound: UsersDto;
 
     try {
@@ -63,8 +65,10 @@ export class AuthService {
       userId: Security.encrypt(userFound.id),
       permissions: Security.encrypt(JSON.stringify(userFound.permissions)),
     };
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    res.setCookie("accessToken", accessToken, {
+      path: "/",
+    });
+    return { message: "Usuário autenticado com sucesso" };
   }
 }

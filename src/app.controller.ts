@@ -1,7 +1,10 @@
-import { Controller, Get, Inject, Param } from "@nestjs/common";
+import { Controller, Get, Inject, Param, Req, Res } from "@nestjs/common";
 import { Cache } from "cache-manager";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { CurrentUserRequest } from "./common/requests/current-user.request";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { IsPublic } from "./common/decorators/is-public.decorator";
+import { randomUUID } from "node:crypto";
 
 @Controller()
 export class AppController {
@@ -34,5 +37,17 @@ export class AppController {
     return {
       cached,
     };
+  }
+
+  @IsPublic()
+  @Get("cookie")
+  findAll(@Req() request: FastifyRequest) {
+    console.log("req", request.cookies);
+  }
+
+  @IsPublic()
+  @Get("set-cookie")
+  findAlls(@Res({ passthrough: true }) response: FastifyReply) {
+    response.setCookie("accessToken", randomUUID());
   }
 }

@@ -6,5 +6,6 @@ declare module "fastify" {
   interface FastifyRequest {
     info?: RequestInfoDto;
     user?: UsersSignInDto;
+    cookies: any;
   }
 }
