@@ -9,7 +9,7 @@ export class SessionsFindByIdRepository {
 
   async execute(sessionId: string): Promise<SessionsDto> {
     const sessionFound = await this.prisma.session.findUnique({
-      where: { id: sessionId },
+      where: { id: sessionId, revokedAt: null },
     });
     if (!sessionFound) throw new SessionsNotFoundException();
     return sessionFound;
