@@ -21,10 +21,18 @@ export class AuthController {
   @AuthSignInDecorator("sign-in")
   signIn(
     @Body() { username, password }: SignInDto,
-    @Ip() ipAddress: string,
+    @CurrentInfoRequest() { ip, headers }: RequestInfoDto,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<MessageDto> {
-    return this.authSignInUseCase.execute(username, password, ipAddress, res);
+    const dto = {
+      res,
+      username,
+      password,
+      ipAddress: ip,
+      userAgent: headers["user-agent"],
+    };
+
+    return this.authSignInUseCase.execute(dto);
   }
 
   @AuthSignOutDecorator("sign-out")

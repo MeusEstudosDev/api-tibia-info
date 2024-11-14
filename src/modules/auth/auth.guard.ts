@@ -109,8 +109,7 @@ export class AuthGuard implements CanActivate {
       await this.sessionsFindByIdRepository.execute(sessionId);
     const ipAddress: string = sessionFound.ipAddress;
 
-    const ipAddressHash: string = Security.hash(request.info.ip);
-    if (!ipAddress || ipAddressHash !== ipAddress) {
+    if (!ipAddress || request.info.ip !== ipAddress) {
       this.redis.del(`ipAddress:${sessionId}`);
       throw new AuthUnauthorizedException();
     }

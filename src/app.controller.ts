@@ -5,6 +5,7 @@ import { CurrentUserRequest } from "./common/requests/current-user.request";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { IsPublic } from "./common/decorators/is-public.decorator";
 import { randomUUID } from "node:crypto";
+import ipinfo from "ipinfo";
 
 @Controller()
 export class AppController {
@@ -42,12 +43,21 @@ export class AppController {
   @IsPublic()
   @Get("cookie")
   findAll(@Req() request: FastifyRequest) {
-    console.log("req", request.cookies);
+    console.info("req", request.cookies);
   }
 
   @IsPublic()
   @Get("set-cookie")
   findAlls(@Res({ passthrough: true }) response: FastifyReply) {
     response.setCookie("accessToken", randomUUID());
+  }
+
+  @IsPublic()
+  @Get("search-ip/:ip")
+  async searchId(@Param("ip") ip: string) {
+    ipinfo(ip, (err, cLoc) => {
+      if (err) throw err;
+      console.info(cLoc);
+    });
   }
 }

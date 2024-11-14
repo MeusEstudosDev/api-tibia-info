@@ -1,7 +1,6 @@
 import { SessionsDto } from "./dtos/sessions.dto";
 import { SessionsCreateDto } from "./dtos/sessions.create.dto";
 import createCuid from "cuid";
-import { Security } from "../../utils/security.util";
 
 export class Session {
   private _id: string;
@@ -9,6 +8,13 @@ export class Session {
   private _expiresAt: Date;
   private _revokedAt: Date | null;
   private _ipAddress: string;
+  private _userAgent: string;
+  private _city: string | null;
+  private _region: string | null;
+  private _country: string | null;
+  private _loc: string | null;
+  private _org: string | null;
+  private _timezone: string | null;
   private _userId: string;
 
   constructor(dto?: SessionsDto) {
@@ -17,6 +23,13 @@ export class Session {
     this._expiresAt = dto?.expiresAt;
     this._revokedAt = dto?.revokedAt;
     this._ipAddress = dto?.ipAddress;
+    this._userAgent = dto?.userAgent;
+    this._city = dto?.city;
+    this._region = dto?.region;
+    this._country = dto?.country;
+    this._loc = dto?.loc;
+    this._org = dto?.org;
+    this._timezone = dto?.timezone;
     this._userId = dto?.userId;
   }
 
@@ -27,6 +40,13 @@ export class Session {
       expiresAt: this._expiresAt,
       revokedAt: this._revokedAt,
       ipAddress: this._ipAddress,
+      userAgent: this._userAgent,
+      city: this._city,
+      region: this._region,
+      country: this._country,
+      loc: this._loc,
+      org: this._org,
+      timezone: this._timezone,
       userId: this._userId,
     };
   }
@@ -44,7 +64,14 @@ export class Session {
     this._createdAt = new Date();
     this._expiresAt = dto.expiresAt;
     this._revokedAt = null;
-    this._ipAddress = Security.hash(dto.ipAddress);
+    this._ipAddress = dto.ipAddress;
+    this._userAgent = dto.userAgent;
+    this._city = dto.city;
+    this._region = dto.region;
+    this._country = dto.country;
+    this._loc = dto.loc;
+    this._org = dto.org;
+    this._timezone = dto.timezone;
     this._userId = dto.userId;
   }
 }
