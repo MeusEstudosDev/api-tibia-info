@@ -52,7 +52,12 @@ export class AuthGuard implements CanActivate {
         await this.handleTokenExpiration(decoded, response);
       }
     } catch {
-      response.setCookie("accessToken", "", { path: "/", maxAge: 0 });
+      response.setCookie("accessToken", "", {
+        path: "/",
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: "Strict",
+      });
       this.redis.del(token);
       throw new AuthUnauthorizedException();
     }
@@ -91,7 +96,12 @@ export class AuthGuard implements CanActivate {
       permissions: decoded.permissions,
     };
     const accessToken: string = await this.jwtService.signAsync(payload);
-    response.setCookie("accessToken", accessToken, { path: "/" });
+    response.setCookie("accessToken", accessToken, {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: "Strict",
+    });
     return true;
   }
 

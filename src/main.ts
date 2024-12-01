@@ -21,11 +21,18 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
-    { cors: true },
   );
+
+  app.enableCors({
+    origin: "http://localhost:4000",
+    credentials: true,
+  });
 
   await app.register(fastifyCookie, {
     secret: env.COOKIE_SECRET,
+    parseOptions: {
+      httpOnly: true,
+    },
   });
 
   app.useGlobalPipes(
