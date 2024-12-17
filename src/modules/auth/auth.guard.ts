@@ -56,7 +56,7 @@ export class AuthGuard implements CanActivate {
         path: "/",
         maxAge: 0,
         httpOnly: true,
-        sameSite: "Strict",
+        sameSite: "strict",
       });
       this.redis.del(token);
       throw new AuthUnauthorizedException();
@@ -100,7 +100,7 @@ export class AuthGuard implements CanActivate {
       path: "/",
       maxAge: 0,
       httpOnly: true,
-      sameSite: "Strict",
+      sameSite: "strict",
     });
     return true;
   }

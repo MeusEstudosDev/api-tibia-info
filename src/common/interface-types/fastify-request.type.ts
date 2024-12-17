@@ -4,8 +4,8 @@ import { RequestInfoDto } from "../dtos/request.info.dto";
 
 declare module "fastify" {
   interface FastifyRequest {
+    cookies: { [cookieName: string]: string | undefined };
     info?: RequestInfoDto;
     user?: UsersSignInDto;
-    cookies: any;
   }
 }

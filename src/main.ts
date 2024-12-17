@@ -1,5 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-import { Logger } from "@nestjs/common/services/logger.service";
+import { Logger } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import {
   FastifyAdapter,
@@ -10,10 +10,10 @@ import fastifyCsrf from "@fastify/csrf-protection";
 import fastifyStatic from "@fastify/static";
 import { join } from "path";
 import { ValidationPipe } from "@nestjs/common";
+import fastifyCookie from "@fastify/cookie";
 
 import { AppModule } from "./app.module";
 import { env } from "./configs/env";
-import fastifyCookie from "@fastify/cookie";
 
 declare const module: any;
 
@@ -28,12 +28,21 @@ async function bootstrap() {
     credentials: true,
   });
 
-  await app.register(fastifyCookie, {
+  await app.register(fastifyCookie as any, {
     secret: env.COOKIE_SECRET,
     parseOptions: {
       httpOnly: true,
     },
   });
+
+  await app.register(fastifyCsrf as any);
+
+  await app.register(fastifyStatic as any, {
+    root: join(__dirname, "..", "public"),
+    prefix: "/",
+  });
+
+  await app.register(helmet as any);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -44,15 +53,6 @@ async function bootstrap() {
     }),
   );
 
-  await app.register(fastifyStatic, {
-    root: join(__dirname, "..", "public"),
-    prefix: "/",
-  });
-
-  await app.register(helmet);
-
-  await app.register(fastifyCsrf);
-
   const config = new DocumentBuilder()
     .setTitle("API Tibia-Info.com")
     .setDescription("API Tibia-Info.com")
@@ -62,11 +62,14 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("docs", app, documentFactory);
 
-  await app.listen(Number(env.PORT), () => Logger.log(env.PORT, "Bootstrap"));
+  await app.listen(Number(env.PORT), "0.0.0.0", () =>
+    Logger.log("Server is running PORT: " + env.PORT),
+  );
 
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
 }
-bootstrap().then((r) => r);
+
+bootstrap().then();
