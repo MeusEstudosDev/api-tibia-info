@@ -17,6 +17,9 @@ import { UsersConfirmChangeEmailUseCase } from "./use-case/users.confirm-change-
 import { env } from "../../configs/env";
 import { UsersChangeEmailSelfDecorator } from "../../common/decorators/users/users.change-email-self.decorator";
 import { UsersChangeEmailSelfConfirmDecorator } from "../../common/decorators/users/users.change-email-self-confirm.decorator";
+import { UsersForgotPasswordDto } from "./dtos/users.forgot-password";
+import { UsersForgotPasswordUseCase } from "./use-case/users.forgot-password";
+import { UsersChangePasswordDecorator } from "../../common/decorators/users/users.change-password.decorator";
 
 @Controller("users")
 export class UsersController {
@@ -26,6 +29,7 @@ export class UsersController {
     private readonly usersUpdateUseCase: UsersUpdateUseCase,
     private readonly usersChangeEmailUseCase: UsersChangeEmailUseCase,
     private readonly usersConfirmChangeEmailUseCase: UsersConfirmChangeEmailUseCase,
+    private readonly usersForgotPasswordUseCase: UsersForgotPasswordUseCase,
   ) {}
 
   @UsersCreateDecorator("create")
@@ -62,5 +66,12 @@ export class UsersController {
   ): Promise<{ url: string }> {
     await this.usersConfirmChangeEmailUseCase.execute(userId);
     return { url: env.URL_FRONT };
+  }
+
+  @UsersChangePasswordDecorator("forgot-password")
+  async forgotPassword(
+    @Body() body: UsersForgotPasswordDto,
+  ): Promise<MessageDto> {
+    return await this.usersForgotPasswordUseCase.execute(body.email);
   }
 }
