@@ -1,6 +1,18 @@
-version: '3.9'
 name: tibia-info
 services:
+#  app-tibia-info:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: tibia-info-back
+#    ports:
+#      - "3000:3000"
+#    networks:
+#      - network_tibia_info
+#    depends_on:
+#      - postgresql-tibia-info
+#      - redis-tibia-info
+
   postgresql-tibia-info:
     container_name: postgresql-tibia-info
     image: bitnami/postgresql:latest
@@ -16,8 +28,8 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   redis-tibia-info:
-    container_name: redis-tibia-info
     image: redis:latest
+    container_name: redis-tibia-info
     ports:
       - "6379:6379"
     networks:
