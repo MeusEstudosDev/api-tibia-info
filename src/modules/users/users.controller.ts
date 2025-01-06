@@ -19,7 +19,11 @@ import { UsersChangeEmailSelfDecorator } from "../../common/decorators/users/use
 import { UsersChangeEmailSelfConfirmDecorator } from "../../common/decorators/users/users.change-email-self-confirm.decorator";
 import { UsersForgotPasswordDto } from "./dtos/users.forgot-password";
 import { UsersForgotPasswordUseCase } from "./use-case/users.forgot-password";
+import { UsersForgotPasswordDecorator } from "../../common/decorators/users/users-forgot-password.decorator";
 import { UsersChangePasswordDecorator } from "../../common/decorators/users/users.change-password.decorator";
+import { UsersChangePasswordDto } from "./dtos/users.change-password.dto";
+import { UsersChangePasswordUseCase } from "./use-case/users.change-password.use-case";
+import { Security } from "../../utils/security.util";
 
 @Controller("users")
 export class UsersController {
@@ -30,6 +34,7 @@ export class UsersController {
     private readonly usersChangeEmailUseCase: UsersChangeEmailUseCase,
     private readonly usersConfirmChangeEmailUseCase: UsersConfirmChangeEmailUseCase,
     private readonly usersForgotPasswordUseCase: UsersForgotPasswordUseCase,
+    private readonly usersChangePasswordUseCase: UsersChangePasswordUseCase,
   ) {}
 
   @UsersCreateDecorator("create")
@@ -64,14 +69,31 @@ export class UsersController {
   async confirmChangeEmailSelf(
     @Param("userId") userId: string,
   ): Promise<{ url: string }> {
-    await this.usersConfirmChangeEmailUseCase.execute(userId);
-    return { url: env.URL_FRONT };
+    try {
+      await this.usersConfirmChangeEmailUseCase.execute(userId);
+
+      return { url: env.URL_FRONT };
+    } catch (err) {
+      console.log(err.response.message);
+      const message = Security.encrypt(err.response.message);
+      return { url: env.URL_FRONT + "/error?message=" + message };
+    }
   }
 
-  @UsersChangePasswordDecorator("forgot-password")
+  @UsersForgotPasswordDecorator("forgot-password")
   async forgotPassword(
     @Body() body: UsersForgotPasswordDto,
   ): Promise<MessageDto> {
     return await this.usersForgotPasswordUseCase.execute(body.email);
+  }
+
+  @UsersChangePasswordDecorator("change-password")
+  async changePassword(
+    @Body() body: UsersChangePasswordDto,
+  ): Promise<MessageDto> {
+    return await this.usersChangePasswordUseCase.execute(
+      body.userId,
+      body.password,
+    );
   }
 }

@@ -62,8 +62,6 @@ export class AuthSignInUseCase {
 
     const ipInfo = await this.ipInfoService.get(ipAddress);
 
-    console.log(ipInfo);
-
     const SessionEntity = new Session();
     SessionEntity.create = {
       userId,
@@ -90,7 +88,12 @@ export class AuthSignInUseCase {
       permissions: Security.encrypt(JSON.stringify(userFound.permissions)),
     };
     const accessToken = await this.jwtService.signAsync(payload);
-    res.setCookie("accessToken", accessToken, { path: "/" });
+    res.setCookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      path: "/",
+      sameSite: "none",
+    });
     return { message: "Usuário autenticado com sucesso" };
   }
 }

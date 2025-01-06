@@ -16,6 +16,7 @@ import { UsersChangeEmailUseCase } from "./use-case/users.change-email.use-case"
 import { NodemailerModule } from "../../providers/nodemailer/nodemailer.module";
 import { UsersFindByEmailRepository } from "./repositories/users.find-by-email.repository";
 import { UsersForgotPasswordUseCase } from "./use-case/users.forgot-password";
+import { UsersChangePasswordUseCase } from "./use-case/users.change-password.use-case";
 
 @Module({
   imports: [PrismaModule, RedisModule, BullMqQueueModule, NodemailerModule],
@@ -27,6 +28,7 @@ import { UsersForgotPasswordUseCase } from "./use-case/users.forgot-password";
     UsersChangeEmailUseCase,
     UsersConfirmChangeEmailUseCase,
     UsersForgotPasswordUseCase,
+    UsersChangePasswordUseCase,
 
     UsersCreateRepository,
     UsersAlreadyExistsRepository,

@@ -118,4 +118,10 @@ export class User {
         String(permission),
       );
   }
+
+  // Metodos abaixo são os validos
+  changePassword(password: string) {
+    const salt = bcrypt.genSaltSync(env.SALT_OR_ROUNDS);
+    this._passwordHash = bcrypt.hashSync(password, salt);
+  }
 }
